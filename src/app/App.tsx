@@ -1,37 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { CardWorkspace } from './components/CardWorkspace';
 import { ChatInterface } from './components/ChatInterface';
-
-interface Card {
-  id: string;
-  content: string;
-  position: { x: number; y: number };
-  size: { width: number; height: number };
-}
+import { Card } from '../types';
+import { getCards, addCard, updateCard, deleteCard } from '../services/cardService';
 
 export default function App() {
-  const [cards, setCards] = useState<Card[]>([
-    {
-      id: '1',
-      content: 'Welcome to the Index Card System!\n\nThis is your first card. You can:\n- Drag me around\n- Resize me\n- Edit my content\n- Delete me',
-      position: { x: 50, y: 50 },
-      size: { width: 300, height: 200 },
-    },
-    {
-      id: '2',
-      content: 'Try adding new cards using the button in the top right!',
-      position: { x: 400, y: 100 },
-      size: { width: 280, height: 150 },
-    },
-  ]);
+  const [cards, setCards] = useState<Card[]>([]);
 
   const [isChatExpanded, setIsChatExpanded] = useState(false);
 
-  const handleAddCard = () => {
-    const newCard: Card = {
-      id: Date.now().toString(),
+  useEffect(() => {
+    getCards()
+      .then(setCards)
+      .catch((error) => console.error('Failed to load cards:', error));
+  }, []);
+
+  const handleAddCard = async () => {
+    const newCardData = {
       content: '',
       position: {
         x: Math.random() * 300 + 50,
@@ -39,35 +26,60 @@ export default function App() {
       },
       size: { width: 300, height: 200 },
     };
-    setCards([...cards, newCard]);
+    try {
+      const newCard = await addCard(newCardData);
+      setCards([...cards, newCard]);
+    } catch (error) {
+      console.error('Failed to add card:', error);
+    }
   };
 
-  const handleMoveCard = (id: string, x: number, y: number) => {
-    setCards((prev) =>
-      prev.map((card) =>
-        card.id === id ? { ...card, position: { x, y } } : card
-      )
-    );
+  const handleMoveCard = async (id: string, x: number, y: number) => {
+    try {
+      await updateCard(id, { position: { x, y } });
+      setCards((prev) =>
+        prev.map((card) =>
+          card.id === id ? { ...card, position: { x, y } } : card
+        )
+      );
+    } catch (error) {
+      console.error('Failed to move card:', error);
+    }
   };
 
-  const handleResizeCard = (id: string, width: number, height: number) => {
-    setCards((prev) =>
-      prev.map((card) =>
-        card.id === id ? { ...card, size: { width, height } } : card
-      )
-    );
+  const handleResizeCard = async (id: string, width: number, height: number) => {
+    try {
+      await updateCard(id, { size: { width, height } });
+      setCards((prev) =>
+        prev.map((card) =>
+          card.id === id ? { ...card, size: { width, height } } : card
+        )
+      );
+    } catch (error) {
+      console.error('Failed to resize card:', error);
+    }
   };
 
-  const handleDeleteCard = (id: string) => {
-    setCards((prev) => prev.filter((card) => card.id !== id));
+  const handleDeleteCard = async (id: string) => {
+    try {
+      await deleteCard(id);
+      setCards((prev) => prev.filter((card) => card.id !== id));
+    } catch (error) {
+      console.error('Failed to delete card:', error);
+    }
   };
 
-  const handleUpdateCardContent = (id: string, content: string) => {
-    setCards((prev) =>
-      prev.map((card) =>
-        card.id === id ? { ...card, content } : card
-      )
-    );
+  const handleUpdateCardContent = async (id: string, content: string) => {
+    try {
+      await updateCard(id, { content });
+      setCards((prev) =>
+        prev.map((card) =>
+          card.id === id ? { ...card, content } : card
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update card content:', error);
+    }
   };
 
   return (
