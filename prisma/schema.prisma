@@ -20,6 +20,7 @@ model Message {
 
 model Card {
   id        Int     @id @default(autoincrement())
+  title     String  @default("Index Card")
   content   String
   messageId Int?
   message   Message? @relation(fields: [messageId], references: [id])

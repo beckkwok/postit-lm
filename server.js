@@ -97,6 +97,49 @@ app.patch('/cards/:id/resize', async (req, res) => {
   res.json(updatedCard);
 });
 
+// Route to update card content
+app.patch('/cards/:id/content', async (req, res) => {
+  const { id } = req.params;
+  const { content } = req.body;
+  if (typeof content !== 'string') {
+    return res.status(400).json({ error: 'Invalid content data' });
+  }
+  const prismaCard = await prisma.card.update({
+    where: { id: parseInt(id) },
+    data: {
+      content: content
+    },
+  });
+  const updatedCard = toCard(prismaCard);
+  res.json(updatedCard);
+});
+
+// Route to update card title
+app.patch('/cards/:id/title', async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+  if (typeof title !== 'string') {
+    return res.status(400).json({ error: 'Invalid title data' });
+  }
+  const prismaCard = await prisma.card.update({
+    where: { id: parseInt(id) },
+    data: {
+      title: title
+    },
+  });
+  const updatedCard = toCard(prismaCard);
+  res.json(updatedCard);
+});
+
+// Route to delete a card
+app.delete('/cards/:id', async (req, res) => {
+  const { id } = req.params;
+  await prisma.card.delete({
+    where: { id: parseInt(id) },
+  });
+  res.status(204).send();
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

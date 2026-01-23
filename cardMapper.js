@@ -11,6 +11,7 @@
 function toCard(prismaCard) {
   return {
     id: prismaCard.id.toString(),
+    title: prismaCard.title ?? 'Index Card',
     content: prismaCard.content,
     position: {
       x: prismaCard.posX,
@@ -31,6 +32,7 @@ function toCard(prismaCard) {
  */
 function toPrismaCard(card, messageId = null) {
   return {
+    title: card?.title ?? null,
     content: card?.content ?? null,
     posX: card?.position?.x ?? null,
     posY: card?.position?.y ?? null,
