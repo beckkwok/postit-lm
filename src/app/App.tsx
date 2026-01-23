@@ -4,7 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { CardWorkspace } from './components/CardWorkspace';
 import { ChatInterface } from './components/ChatInterface';
 import { Card } from '../types';
-import { getCards, addCard, updateCard, deleteCard } from '../services/cardService';
+import { getCards, addCard, updateCard, deleteCard, moveCard } from '../services/cardService';
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -36,7 +36,7 @@ export default function App() {
 
   const handleMoveCard = async (id: string, x: number, y: number) => {
     try {
-      await updateCard(id, { position: { x, y } });
+      await moveCard(id, { x, y });
       setCards((prev) =>
         prev.map((card) =>
           card.id === id ? { ...card, position: { x, y } } : card

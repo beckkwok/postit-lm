@@ -10,11 +10,16 @@ export const getCards = async (): Promise<Card[]> => {
 
 export const addCard = async (card: Omit<Card, 'id'>): Promise<Card> => {
   const response = await axios.post(API_BASE, card);
-  return response.data;
+  return {id: response.data.id, content: 'Untitled card', position: { x: response.data.posX, y: response.data.posY }, size: { width: response.data.width, height: response.data.height } };
 };
 
 export const updateCard = async (id: string, updates: Partial<Card>): Promise<Card> => {
   const response = await axios.put(`${API_BASE}/${id}`, updates);
+  return response.data;
+};
+
+export const moveCard = async (id: string, position: { x: number; y: number }): Promise<Card> => {
+  const response = await axios.patch(`${API_BASE}/${id}/move`, { position });
   return response.data;
 };
 
