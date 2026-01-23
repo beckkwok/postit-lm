@@ -4,7 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { CardWorkspace } from './components/CardWorkspace';
 import { ChatInterface } from './components/ChatInterface';
 import { Card } from '../types';
-import { getCards, addCard, updateCard, deleteCard, moveCard } from '../services/cardService';
+import { getCards, addCard, updateCard, deleteCard, moveCard, resizeCard, updateContent, updateTitle } from '../services/cardService';
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -19,6 +19,7 @@ export default function App() {
 
   const handleAddCard = async () => {
     const newCardData = {
+      title: 'Index Card',
       content: '',
       position: {
         x: Math.random() * 300 + 50,
@@ -49,7 +50,7 @@ export default function App() {
 
   const handleResizeCard = async (id: string, width: number, height: number) => {
     try {
-      await updateCard(id, { size: { width, height } });
+      await resizeCard(id, { width, height });
       setCards((prev) =>
         prev.map((card) =>
           card.id === id ? { ...card, size: { width, height } } : card
@@ -61,6 +62,8 @@ export default function App() {
   };
 
   const handleDeleteCard = async (id: string) => {
+    const confirmed = window.confirm('Are you sure you want to delete this card?');
+    if (!confirmed) return;
     try {
       await deleteCard(id);
       setCards((prev) => prev.filter((card) => card.id !== id));
@@ -71,7 +74,7 @@ export default function App() {
 
   const handleUpdateCardContent = async (id: string, content: string) => {
     try {
-      await updateCard(id, { content });
+      await updateContent(id, content);
       setCards((prev) =>
         prev.map((card) =>
           card.id === id ? { ...card, content } : card
@@ -79,6 +82,19 @@ export default function App() {
       );
     } catch (error) {
       console.error('Failed to update card content:', error);
+    }
+  };
+
+  const handleUpdateCardTitle = async (id: string, title: string) => {
+    try {
+      await updateTitle(id, title);
+      setCards((prev) =>
+        prev.map((card) =>
+          card.id === id ? { ...card, title } : card
+        )
+      );
+    } catch (error) {
+      console.error('Failed to update card title:', error);
     }
   };
 
@@ -98,6 +114,7 @@ export default function App() {
             onResizeCard={handleResizeCard}
             onDeleteCard={handleDeleteCard}
             onUpdateCardContent={handleUpdateCardContent}
+            onUpdateCardTitle={handleUpdateCardTitle}
           />
         </div>
 

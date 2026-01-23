@@ -10,7 +10,7 @@ export const getCards = async (): Promise<Card[]> => {
 
 export const addCard = async (card: Omit<Card, 'id'>): Promise<Card> => {
   const response = await axios.post(API_BASE, card);
-  return {id: response.data.id, content: 'Untitled card', position: { x: response.data.posX, y: response.data.posY }, size: { width: response.data.width, height: response.data.height } };
+  return {id: response.data.id, title: response.data.title, content: 'Untitled card', position: { x: response.data.posX, y: response.data.posY }, size: { width: response.data.width, height: response.data.height } };
 };
 
 export const updateCard = async (id: string, updates: Partial<Card>): Promise<Card> => {
@@ -20,6 +20,21 @@ export const updateCard = async (id: string, updates: Partial<Card>): Promise<Ca
 
 export const moveCard = async (id: string, position: { x: number; y: number }): Promise<Card> => {
   const response = await axios.patch(`${API_BASE}/${id}/move`, { position });
+  return response.data;
+};
+
+export const resizeCard = async (id: string, size: { width: number; height: number }): Promise<Card> => {
+  const response = await axios.patch(`${API_BASE}/${id}/resize`, { size });
+  return response.data;
+};
+
+export const updateContent = async (id: string, content: string): Promise<Card> => {
+  const response = await axios.patch(`${API_BASE}/${id}/content`, { content });
+  return response.data;
+};
+
+export const updateTitle = async (id: string, title: string): Promise<Card> => {
+  const response = await axios.patch(`${API_BASE}/${id}/title`, { title });
   return response.data;
 };
 

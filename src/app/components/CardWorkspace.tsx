@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react';
 
 interface Card {
   id: string;
+  title: string;
   content: string;
   position: { x: number; y: number };
   size: { width: number; height: number };
@@ -16,6 +17,7 @@ interface CardWorkspaceProps {
   onResizeCard: (id: string, width: number, height: number) => void;
   onDeleteCard: (id: string) => void;
   onUpdateCardContent: (id: string, content: string) => void;
+  onUpdateCardTitle: (id: string, title: string) => void;
 }
 
 export function CardWorkspace({
@@ -25,6 +27,7 @@ export function CardWorkspace({
   onResizeCard,
   onDeleteCard,
   onUpdateCardContent,
+  onUpdateCardTitle,
 }: CardWorkspaceProps) {
   const [, drop] = useDrop(() => ({
     accept: 'CARD',
@@ -39,7 +42,7 @@ export function CardWorkspace({
   }));
 
   return (
-    <div ref={drop} className="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-auto">
+    <div ref={drop as any} className="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-auto">
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
       
       {/* Add Card Button */}
@@ -56,6 +59,7 @@ export function CardWorkspace({
         <IndexCard
           key={card.id}
           id={card.id}
+          title={card.title}
           content={card.content}
           position={card.position}
           size={card.size}
@@ -63,6 +67,7 @@ export function CardWorkspace({
           onResize={onResizeCard}
           onDelete={onDeleteCard}
           onContentChange={onUpdateCardContent}
+          onTitleChange={onUpdateCardTitle}
         />
       ))}
     </div>

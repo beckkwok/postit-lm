@@ -5,6 +5,7 @@ import { X, GripVertical } from 'lucide-react';
 
 interface IndexCardProps {
   id: string;
+  title: string;
   content: string;
   position: { x: number; y: number };
   size: { width: number; height: number };
@@ -12,10 +13,12 @@ interface IndexCardProps {
   onResize: (id: string, width: number, height: number) => void;
   onDelete: (id: string) => void;
   onContentChange: (id: string, content: string) => void;
+  onTitleChange: (id: string, title: string) => void;
 }
 
 export function IndexCard({
   id,
+  title,
   content,
   position,
   size,
@@ -23,6 +26,7 @@ export function IndexCard({
   onResize,
   onDelete,
   onContentChange,
+  onTitleChange,
 }: IndexCardProps) {
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     type: 'CARD',
@@ -58,7 +62,12 @@ export function IndexCard({
           >
             <div className="flex items-center gap-2">
               <GripVertical className="w-4 h-4 text-gray-400" />
-              <span className="text-xs text-gray-500">Index Card</span>
+              <input
+                value={title}
+                onChange={(e) => onTitleChange(id, e.target.value)}
+                className="text-xs text-gray-500 bg-transparent border-none outline-none focus:outline-none"
+                placeholder="Title"
+              />
             </div>
             <button
               onClick={() => onDelete(id)}
