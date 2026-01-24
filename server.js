@@ -26,7 +26,21 @@ app.post('/messages', async (req, res) => {
   const message = await prisma.message.create({
     data: { role, content },
   });
-  res.json(message);
+
+  let responseMessages = [];
+
+  if (role === 'user') {
+    // Generate a sample assistant response
+    const assistantContent = `I understand you said: "${content}". This is a sample response from the server. In a real implementation, this would connect to an LLM API to provide intelligent assistance with your index cards.`;
+    
+    const assistantMessage = await prisma.message.create({
+      data: { role: 'assistant', content: assistantContent },
+    });
+    
+    responseMessages.push(assistantMessage);
+  }
+  
+  res.json(responseMessages);
 });
 
 // Route to get cards
@@ -40,7 +54,8 @@ app.get('/cards', async (req, res) => {
 
 // Route to create a card
 app.post('/cards', async (req, res) => {
-  let prismaData = toPrismaCard(req.body, null);
+  const { messageId, ...cardData } = req.body;
+  let prismaData = toPrismaCard(cardData, messageId ? parseInt(messageId) : null);
   const prismaCard = await prisma.card.create({
     data: prismaData,
   });

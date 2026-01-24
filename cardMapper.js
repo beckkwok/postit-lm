@@ -20,7 +20,8 @@ function toCard(prismaCard) {
     size: {
       width: prismaCard.width,
       height: prismaCard.height
-    }
+    },
+    messageId: prismaCard.messageId ? prismaCard.messageId.toString() : undefined
   };
 }
 
