@@ -10,7 +10,25 @@ export const getCards = async (): Promise<Card[]> => {
 
 export const addCard = async (card: Omit<Card, 'id'>): Promise<Card> => {
   const response = await axios.post(API_BASE, card);
-  return {id: response.data.id, title: response.data.title, content: 'Untitled card', position: { x: response.data.position.x, y: response.data.position.y }, size: { width: response.data.size.width, height: response.data.size.height } };
+  return {
+    id: response.data.id,
+    title: response.data.title,
+    content: response.data.content,
+    position: response.data.position,
+    size: response.data.size,
+    messageId: response.data.messageId
+  };
+};
+
+export const addCardFromMessage = async (messageId: string, position: { x: number; y: number }): Promise<Card> => {
+  const cardData = {
+    title: 'Card from Message',
+    content: '',
+    position,
+    size: { width: 300, height: 200 },
+    messageId
+  };
+  return addCard(cardData);
 };
 
 export const updateCard = async (id: string, updates: Partial<Card>): Promise<Card> => {

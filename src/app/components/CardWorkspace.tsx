@@ -12,22 +12,28 @@ interface Card {
 
 interface CardWorkspaceProps {
   cards: Card[];
+  selectedCardId: string | null;
   onAddCard: () => void;
   onMoveCard: (id: string, x: number, y: number) => void;
   onResizeCard: (id: string, width: number, height: number) => void;
   onDeleteCard: (id: string) => void;
   onUpdateCardContent: (id: string, content: string) => void;
   onUpdateCardTitle: (id: string, title: string) => void;
+  onSelectCard: (id: string | null) => void;
+  onShowMessage?: (messageId: string) => void;
 }
 
 export function CardWorkspace({
   cards,
+  selectedCardId,
   onAddCard,
   onMoveCard,
   onResizeCard,
   onDeleteCard,
   onUpdateCardContent,
   onUpdateCardTitle,
+  onSelectCard,
+  onShowMessage,
 }: CardWorkspaceProps) {
   const [, drop] = useDrop(() => ({
     accept: 'CARD',
@@ -42,7 +48,11 @@ export function CardWorkspace({
   }));
 
   return (
-    <div ref={drop as any} className="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-auto">
+    <div 
+      ref={drop as any} 
+      className="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-auto"
+      onClick={() => onSelectCard(null)}
+    >
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
       
       {/* Add Card Button */}
@@ -63,11 +73,15 @@ export function CardWorkspace({
           content={card.content}
           position={card.position}
           size={card.size}
+          messageId={card.messageId}
+          isSelected={selectedCardId === card.id}
           onMove={onMoveCard}
           onResize={onResizeCard}
           onDelete={onDeleteCard}
           onContentChange={onUpdateCardContent}
           onTitleChange={onUpdateCardTitle}
+          onSelect={() => onSelectCard(card.id)}
+          onShowMessage={onShowMessage}
         />
       ))}
     </div>

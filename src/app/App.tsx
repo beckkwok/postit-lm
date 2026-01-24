@@ -4,11 +4,12 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { CardWorkspace } from './components/CardWorkspace';
 import { ChatInterface } from './components/ChatInterface';
 import { Card } from '../types';
-import { getCards, addCard, updateCard, deleteCard, moveCard, resizeCard, updateContent, updateTitle } from '../services/cardService';
+import { getCards, addCard, updateCard, deleteCard, moveCard, resizeCard, updateContent, updateTitle, addCardFromMessage } from '../services/cardService';
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
-
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
 
   useEffect(() => {
@@ -98,6 +99,28 @@ export default function App() {
     }
   };
 
+  const handleSelectCard = (id: string | null) => {
+    setSelectedCardId(id);
+  };
+
+  const handleShowMessage = (messageId: string) => {
+    setHighlightedMessageId(messageId);
+    setIsChatExpanded(true); // Expand chat when showing a message
+  };
+
+  const handleCreateCardFromMessage = async (messageId: string) => {
+    const position = {
+      x: Math.random() * 300 + 50,
+      y: Math.random() * 200 + 50,
+    };
+    try {
+      const newCard = await addCardFromMessage(messageId, position);
+      setCards([...cards, newCard]);
+    } catch (error) {
+      console.error('Failed to create card from message:', error);
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="h-screen w-screen flex flex-col overflow-hidden bg-gray-900">
@@ -109,12 +132,15 @@ export default function App() {
         >
           <CardWorkspace
             cards={cards}
+            selectedCardId={selectedCardId}
             onAddCard={handleAddCard}
             onMoveCard={handleMoveCard}
             onResizeCard={handleResizeCard}
             onDeleteCard={handleDeleteCard}
             onUpdateCardContent={handleUpdateCardContent}
             onUpdateCardTitle={handleUpdateCardTitle}
+            onSelectCard={handleSelectCard}
+            onShowMessage={handleShowMessage}
           />
         </div>
 
@@ -127,6 +153,8 @@ export default function App() {
           <ChatInterface
             isExpanded={isChatExpanded}
             onToggleExpand={() => setIsChatExpanded(!isChatExpanded)}
+            highlightedMessageId={highlightedMessageId}
+            onCreateCardFromMessage={handleCreateCardFromMessage}
           />
         </div>
       </div>
