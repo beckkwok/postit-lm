@@ -11,6 +11,7 @@ export default function App() {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
 
   useEffect(() => {
     getCards()
@@ -120,6 +121,7 @@ export default function App() {
       console.error('Failed to create card from message:', error);
     }
   };
+
 
   return (
     <DndProvider backend={HTML5Backend}>

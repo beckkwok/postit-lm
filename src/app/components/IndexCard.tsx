@@ -88,7 +88,7 @@ export function IndexCard({
               <GripVertical className="w-4 h-4 text-gray-400" />
               <input
                 value={title}
-                onChange={(e) => debouncedTitleChange(e.target.value)}
+                onChange={(e) => onTitleChange(id, e.target.value)}
                 className="text-xs text-gray-500 bg-transparent border-none outline-none focus:outline-none"
                 placeholder="Title"
               />
@@ -116,7 +116,7 @@ export function IndexCard({
           </div>
           <textarea
             value={content}
-            onChange={(e) => debouncedContentChange(e.target.value)}
+            onChange={(e) => onContentChange(id, e.target.value)}
             className="flex-1 w-full p-3 resize-none focus:outline-none rounded-b-lg"
             placeholder="Type your notes here..."
           />
