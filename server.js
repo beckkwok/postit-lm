@@ -1,6 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { toCard, toPrismaCard } = require('./cardMapper');
+const llmService = require('./llmService');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -30,16 +31,26 @@ app.post('/messages', async (req, res) => {
   let responseMessages = [];
 
   if (role === 'user') {
-    // Generate a sample assistant response
-    const assistantContent = `I understand you said: "${content}". This is a sample response from the server. In a real implementation, this would connect to an LLM API to provide intelligent assistance with your index cards.`;
-    
+    // Get previous messages for context (excluding the current message)
+    const previousMessages = await prisma.message.findMany({
+      where: {
+        id: { not: message.id } // Exclude the current message
+      },
+      orderBy: { createdAt: 'asc' }
+    });
+
+    // Generate AI response using Gemini
+    const assistantContent = await llmService.generateResponse(content, {
+      messages: previousMessages
+    });
+
     const assistantMessage = await prisma.message.create({
       data: { role: 'assistant', content: assistantContent },
     });
-    
+
     responseMessages.push(assistantMessage);
   }
-  
+
   res.json(responseMessages);
 });
 

@@ -9,22 +9,40 @@ A simple Express server integrated with Prisma and SQLite.
    npm install
    ```
 
-2. Set up the database:
+2. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Get a Google Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Add your API key to `.env`:
+     ```
+     GEMINI_API_KEY=your_actual_api_key_here
+     ```
+
+3. Set up the database:
    ```
    npx prisma migrate dev --name init
    ```
 
-3. Generate Prisma client:
+4. Generate Prisma client:
    ```
    npx prisma generate
    ```
 
-4. Start the server:
+5. Start the server:
    ```
    npm run dev
    ```
 
 The server will run on http://localhost:3000
+
+## AI Integration
+
+This server integrates with Google's Gemini AI to provide intelligent responses for the index card system. The AI assistant can help with:
+
+- Summarizing card content
+- Organizing cards by themes or categories
+- Providing insights about content
+- Suggesting connections between cards
+- Note-taking strategies
 
 ## API Endpoints
 
