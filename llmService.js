@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 class LLMService {
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    this.model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   }
 
   async generateResponse(userMessage, context = {}) {

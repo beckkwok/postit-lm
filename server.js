@@ -1,6 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { toCard, toPrismaCard } = require('./cardMapper');
+const dotenv = require('dotenv').config({path: './.env'});
 const llmService = require('./llmService');
 
 const app = express();
