@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Maximize2, Minimize2, Sparkles, Plus } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { Message } from '../../types';
 import { getMessages, sendMessage } from '../../services/messageService';
 
@@ -126,7 +127,9 @@ export function ChatInterface({ isExpanded, onToggleExpand, highlightedMessageId
                   <Plus className="w-3 h-3" />
                 </button>
               )}
-              <p className="text-sm">{message.content}</p>
+              <div className="text-sm prose prose-sm dark:prose-invert max-w-none [&_p]:m-0 [&_ul]:m-0 [&_ol]:m-0 [&_li]:m-0 [&_pre]:m-0 [&_code]:text-xs">
+                <ReactMarkdown>{message.content}</ReactMarkdown>
+              </div>
               <span className="text-xs opacity-70 mt-1 block">
                 {message.timestamp.toLocaleTimeString([], {
                   hour: '2-digit',
