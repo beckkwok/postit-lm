@@ -16,10 +16,16 @@ app.get('/', (req, res) => {
 
 // Route to get messages
 app.get('/messages', async (req, res) => {
-  const messages = await prisma.message.findMany({
-    orderBy: { createdAt: 'asc' }
-  });
-  res.json(messages);
+  try {
+    const messages = await prisma.message.findMany({
+      orderBy: { createdAt: 'asc' }
+    });
+    
+    return res.json(messages);
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to retrieve messages' });
+  }
+
 });
 
 // Route to create a message
@@ -68,11 +74,15 @@ app.get('/cards', async (req, res) => {
 app.post('/cards', async (req, res) => {
   const { messageId, ...cardData } = req.body;
   let prismaData = toPrismaCard(cardData, messageId ? parseInt(messageId) : null);
-  const prismaCard = await prisma.card.create({
-    data: prismaData,
-  });
-  const createdCard = toCard(prismaCard);
-  res.json(createdCard);
+  try {
+    const prismaCard = await prisma.card.create({
+      data: prismaData,
+    });
+    const createdCard = toCard(prismaCard);
+    res.json(createdCard);
+  } catch (error) {
+    return res.status(500).json({ error: 'Cannot create card' });
+  }
 });
 
 // Route to update a card
@@ -161,13 +171,21 @@ app.patch('/cards/:id/title', async (req, res) => {
 // Route to delete a card
 app.delete('/cards/:id', async (req, res) => {
   const { id } = req.params;
-  await prisma.card.delete({
-    where: { id: parseInt(id) },
-  });
+  try {
+    await prisma.card.delete({
+      where: { id: parseInt(id) },
+    });
+  } catch (error) {
+    return res.status(404).json({ error: 'Card not found' });
+  }
   res.status(204).send();
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = { app, prisma };
