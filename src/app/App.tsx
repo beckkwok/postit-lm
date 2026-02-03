@@ -4,14 +4,13 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { CardWorkspace } from './components/CardWorkspace';
 import { ChatInterface } from './components/ChatInterface';
 import { Card } from '../types';
-import { getCards, addCard, updateCard, deleteCard, moveCard, resizeCard, updateContent, updateTitle, addCardFromMessage } from '../services/cardService';
+import { getCards, addCard, deleteCard, moveCard, resizeCard, updateContent, updateTitle, addCardFromMessage } from '../services/cardService';
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
-  const [isComposing, setIsComposing] = useState(false);
 
   useEffect(() => {
     getCards()
